@@ -1,0 +1,14 @@
+date,hour,road_name,density_score,average_speed,weather_condition,lat,lon
+2024-01-01,08,Konya Yolu,45,65,Güneşli,39.8900,32.8200
+2024-01-01,12,Konya Yolu,60,50,Bulutlu,39.8900,32.8200
+2024-01-01,18,Konya Yolu,95,12,Karlı,39.8900,32.8200
+2024-01-01,21,Konya Yolu,30,80,Açık,39.8900,32.8200
+2024-01-01,08,Eskişehir Yolu,85,20,Yağmurlu,39.9100,32.8100
+2024-01-01,12,Eskişehir Yolu,55,55,Güneşli,39.9100,32.8100
+2024-01-01,18,Eskişehir Yolu,90,15,Yağmurlu,39.9100,32.8100
+2024-01-01,08,İstanbul Yolu,40,70,Güneşli,39.9500,32.7500
+2024-01-01,18,İstanbul Yolu,88,25,Yağmurlu,39.9500,32.7500
+2024-01-01,08,Cinnah Caddesi,50,45,Güneşli,39.8980,32.8550
+2024-01-01,18,Cinnah Caddesi,92,10,Yağmurlu,39.8980,32.8550
+2024-01-01,08,Samsun Yolu,65,45,Bulutlu,39.9800,32.9500
+2024-01-01,18,Samsun Yolu,78,35,Güneşli,39.9800,32.9500
