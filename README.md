@@ -1,35 +1,52 @@
-# 🚗 Ankara Traffic Analysis & Predictive AI Portal
+# 🚗 Ankara Traffic: AI Prediction & Deep Statistical Audit Portal
 
-This project is an end-to-end data science application designed to analyze traffic density across Ankara's major arterial roads. It leverages machine learning to predict average speeds based on real-time factors and statistically validates model assumptions to ensure ethical and reliable data storytelling.
+This project is a high-end **Data Science** and **AI Software Engineering** application. It moves beyond simple visualization by implementing a rigorous statistical framework to validate traffic data and predict average vehicle speeds in Ankara.
 
-![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Scikit-Learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white)
 
-## 🌐 Live Application
-You can interact with the live dashboard here: [Ankara Traffic Analysis App](https://ankara-traffic-analysis-app.streamlit.app)
 
-## 🎯 Project Objective
-The primary goal of this portal is to provide transparent traffic insights for urban planning and individual commuting. By integrating weather conditions and density scores, the AI model aims to provide accurate speed estimations, helping users understand urban mobility patterns.
+## 🔬 Scientific Methodology (The 5-Step Audit)
 
-## 🚀 Key Features
-- **Interactive Visualization:** Dynamic map rendering road-specific traffic density.
-- **AI Prediction Engine:** Multi-variable `LinearRegression` model predicting speed based on traffic density and weather conditions.
-- **Statistical Rigor:** - **R² (Coefficient of Determination):** Achieving high explainability (~95%) for model reliability.
-  - **Durbin-Watson Test:** Statistically verified no-autocorrelation (Score ≈ 2.0), ensuring the integrity of the regression assumptions.
-- **Correlation Analysis:** Scientific heatmaps visualizing the relationship between variables.
+Before any AI modeling occurs, the system subjects the raw data to a comprehensive **Econometric Audit** to ensure the integrity of the results:
 
-## ⚖️ Ethical Considerations & Data Integrity
-In the development of this project:
-- **Accuracy:** Model performance is not just claimed but statistically proven through residue analysis.
-- **Transparency:** All parameters (weather, density) affecting the AI's decision-making process are visible to the user.
-- **Accountability:** Assumptions of the Linear Regression model were tested to prevent misleading interpretations of urban data.
+### 1. Outlier Removal (IQR Method)
+Using the **Interquartile Range (IQR)**, the system identifies and removes noise and anomalies (e.g., GPS errors or extreme speed spikes). This ensures the AI model is trained on realistic traffic patterns.
 
-- ![App Demo](screenshot.png.png)
- 
-## 🛠️ Installation & Usage
-To run this project locally:
 
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/CihanOzdemir1996/ankara-traffic-analysis-portal.git]
+### 2. Normality Testing (Shapiro-Wilk)
+The system evaluates the distribution of speed data using the **Shapiro-Wilk Test**. 
+- **Insight:** Based on the $p-value$, the engine dynamically switches between **Pearson** (for normal distributions) and **Spearman Rank** (for skewed distributions) correlation methods.
+
+
+### 3. Multicollinearity Assessment (VIF)
+To ensure model stability, we calculate the **Variance Inflation Factor (VIF)** for independent variables (Density, Weather, Hour). 
+- **Goal:** We verify that no features are redundant or overly correlated (VIF < 5), allowing the model to assign accurate importance to each factor.
+
+
+### 4. Homoscedasticity Check (Breusch-Pagan)
+We validate the **Homogeneity of Variance** using the **Breusch-Pagan Test**. This confirms that the model's error rate remains constant across all traffic conditions, preventing biased predictions.
+
+
+### 5. Autocorrelation Analysis (Durbin-Watson)
+The system performs a **Durbin-Watson Diagnostic** to check for independence of residuals, ensuring that time-series patterns do not invalidate the regression assumptions.
+
+---
+
+## 🤖 AI Features & Interactive Simulation
+- **AI Prediction Engine:** A multivariate Linear Regression model that forecasts speed based on density, hour, and weather.
+- **Dynamic Traffic Simulator:** Real-time "What-If" analysis tool for urban planners.
+- **Geospatial Analytics:** Interactive mapping of traffic hotspots across Ankara.
+- **Advanced Visualization:** Automated heatmaps and hourly flow dynamics.
+
+## 🛠️ Tech Stack
+- **Languages:** Python
+- **Backend/AI:** Scikit-Learn, Statsmodels, SciPy
+- **Frontend:** Streamlit
+- **Data:** Pandas, NumPy
+- **Visuals:** Seaborn, Matplotlib
+
+## 👤 Author
+Developed by **Cihan Özdemir** [![LinkedIn](https://img.shields.io/badge/LinkedIn-ozdemircihan-blue?logo=linkedin)](https://www.linkedin.com/in/ozdemircihan/)
+[![GitHub](https://img.shields.io/badge/GitHub-CihanOzdemir1996-black?logo=github)](https://github.com/CihanOzdemir1996)
+
+---
+*Verified with Advanced Statistical Frameworks (VIF, Shapiro-Wilk, Breusch-Pagan).*
