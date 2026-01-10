@@ -25,6 +25,11 @@ In the development of this project:
 - **Transparency:** All parameters (weather, density) affecting the AI's decision-making process are visible to the user.
 - **Accountability:** Assumptions of the Linear Regression model were tested to prevent misleading interpretations of urban data.
 
+- ![App Demo](screenshot.png.png)
+- ![App Demo](screenshot.png(2).png)
+- ![App Demo](screenshot.png(3).png)
+  
+
 ## 🛠️ Installation & Usage
 To run this project locally:
 
