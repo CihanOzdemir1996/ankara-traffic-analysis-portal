@@ -30,4 +30,4 @@ To run this project locally:
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/CihanOzdemir1996/ankara-traffic-analysis-portal.git](https://github.com/CihanOzdemir1996/ankara-traffic-analysis-portal.git)
+   git clone [https://github.com/CihanOzdemir1996/ankara-traffic-analysis-portal.git]
