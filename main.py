@@ -4,156 +4,150 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from statsmodels.stats.stattools import durbin_watson
+from statsmodels.stats.diagnostic import het_breuschpagan
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+import statsmodels.api as sm
 from scipy import stats
 import numpy as np
 
 # --- 1. PAGE CONFIGURATION ---
-st.set_page_config(
-    page_title="Ankara AI & Data Science Portal",
-    page_icon="🏎️",
-    layout="wide"
-)
+st.set_page_config(page_title="Ankara Traffic: Ultimate AI Portal", layout="wide", page_icon="🔬")
 
-# --- 2. DATA SCIENCE AUDIT (BACKEND) ---
+# --- 2. ADVANCED DATA AUDIT (BACKEND) ---
 @st.cache_data
 def load_and_audit_data():
     try:
         df = pd.read_csv("ankara_traffic_data.csv")
         df.columns = df.columns.str.strip()
-        
-        # Mapping weather to numeric for statistical modeling
         weather_map = {"Güneşli": 1, "Bulutlu": 2, "Yağmurlu": 3, "Karlı": 4}
         df['weather_numeric'] = df['weather_condition'].map(weather_map).fillna(1)
         
-        # [Data Science Step] Outlier Removal using IQR Method
+        # [DS Step] Outlier Removal (IQR)
         Q1, Q3 = df['average_speed'].quantile([0.25, 0.75])
         IQR = Q3 - Q1
         df_cleaned = df[(df['average_speed'] >= Q1 - 1.5 * IQR) & (df['average_speed'] <= Q3 + 1.5 * IQR)].copy()
-        
         return df, df_cleaned, weather_map
     except Exception as e:
-        st.error(f"Data loading error: {e}")
+        st.error(f"Error: {e}")
         return pd.DataFrame(), pd.DataFrame(), {}
 
 df_raw, df, weather_map = load_and_audit_data()
 
 if not df.empty:
-    # --- SIDEBAR CONTROL PANEL ---
-    st.sidebar.title("🎮 Model Control Center")
-    road_list = sorted(df["road_name"].unique())
-    selected_road = st.sidebar.selectbox("Filter Visuals by Road:", road_list)
+    # --- SIDEBAR CONTROL ---
+    st.sidebar.title("🎮 Analysis Controls")
+    selected_road = st.sidebar.selectbox("Focus Road (Visuals):", sorted(df["road_name"].unique()))
     road_data = df[df["road_name"] == selected_road]
 
-    # --- MAIN HEADER ---
-    st.title("🚗 Ankara Traffic: AI Prediction & Data Science Portal")
-    st.markdown("Connecting **Statistical Rigor** with **Modern AI Software Engineering**.")
+    # --- HEADER ---
+    st.title("🚗 Ankara Traffic: AI Prediction & Deep Statistical Audit")
+    st.markdown("This platform integrates **Software Engineering, AI Modeling, and Advanced Econometric Testing.**")
     st.divider()
 
-    # --- SECTION 1: STATISTICAL AUDIT (The Scientist's Perspective) ---
-    st.header("🔬 1. Statistical Audit & Data Integrity")
+    # --- SECTION 1: DATA INTEGRITY & NORMALITY ---
+    st.header("🔬 1. Data Integrity & Normality Audit")
+    c1, c2, c3 = st.columns(3)
     
-    # Audit Metrics
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Raw Observations", len(df_raw))
-    m2.metric("Outliers Removed", len(df_raw) - len(df))
-    
-    # Shapiro-Wilk Normality Test
-    stat, p_norm = stats.shapiro(df['average_speed'][:500])
-    m3.metric("Shapiro-Wilk p-value", f"{p_norm:.4f}")
-    
-    is_normal = p_norm > 0.05
-    m4.metric("Verified Status", "Normal Distribution" if is_normal else "Skewed Distribution")
+    with c1:
+        st.write("### Cleaning (IQR)")
+        st.metric("Raw Observations", len(df_raw))
+        st.metric("Cleaned Data", len(df))
+        st.caption(f"{len(df_raw)-len(df)} outliers removed to reduce noise.")
 
-    # Distribution & Logic
-    col_dist, col_logic = st.columns([1.2, 0.8])
-    with col_dist:
-        fig_hist, ax_hist = plt.subplots(figsize=(10, 5))
+    with c2:
+        st.write("### Normality (Shapiro)")
+        stat_sw, p_norm = stats.shapiro(df['average_speed'][:500])
+        st.metric("Shapiro-Wilk p-value", f"{p_norm:.4f}")
+        is_normal = p_norm > 0.05
+        corr_method = 'pearson' if is_normal else 'spearman'
+        st.info(f"Method: **{corr_method.capitalize()}**")
+
+    with c3:
+        st.write("### Speed Distribution")
+        fig_hist, ax_hist = plt.subplots(figsize=(8, 5))
         sns.histplot(df['average_speed'], kde=True, color="#ff4b4b", ax=ax_hist)
-        ax_hist.set_title("Post-Cleaning Speed Distribution")
         st.pyplot(fig_hist)
 
-    with col_logic:
-        st.subheader("Decision Intelligence")
-        if is_normal:
-            st.success("✅ **Parametric Assumption Met:** Using Pearson Correlation.")
-            corr_method = 'pearson'
-        else:
-            st.warning("⚠️ **Non-Parametric Shift:** Using Spearman Rank Correlation.")
-            corr_method = 'spearman'
-        
-        # Significance Testing
-        if corr_method == 'pearson':
-            r_val, p_val = stats.pearsonr(df['density_score'], df['average_speed'])
-        else:
-            r_val, p_val = stats.spearmanr(df['density_score'], df['average_speed'])
-            
-        st.write(f"**Calculated Coefficient:** {r_val:.4f}")
-        st.write(f"**P-Value (Significance):** {p_val:.2e}")
-        if p_val < 0.05:
-            st.info("The relationship between variables is statistically significant.")
-
-    # --- SECTION 2: AI PREDICTION ENGINE (The Engineer's Perspective) ---
+    # --- SECTION 2: MULTICOLLINEARITY & VARIANCE (THE ADVANCED TESTS) ---
     st.divider()
-    st.header("🤖 2. AI Predictive Modeling & Diagnostics")
+    st.header("🧪 2. Multicollinearity (VIF) & Homoscedasticity")
     
-    X = df[['density_score', 'weather_numeric']].values
-    y = df['average_speed'].values
-    model = LinearRegression().fit(X, y)
-    y_pred = model.predict(X)
+    # Model for testing
+    X_audit = df[['density_score', 'weather_numeric', 'hour']]
+    X_audit_const = sm.add_constant(X_audit)
+    y_audit = df['average_speed']
+    model_audit = sm.OLS(y_audit, X_audit_const).fit()
 
-    col_sim, col_diag = st.columns(2)
-    with col_sim:
-        st.write("### Traffic Simulator")
-        u_dens = st.slider("Target Density (%)", 0, 100, 50)
-        u_weath = st.selectbox("Weather Condition", list(weather_map.keys()))
-        
-        # FIXED LINE: f-string now properly terminated
-        prediction = model.predict(np.array([[u_dens, weather_map[u_weath]]]))[0]
-        st.success(f"**AI Predicted Average Speed:** {prediction:.2f} km/h")
+    cv1, cv2 = st.columns(2)
+    with cv1:
+        st.write("### Multicollinearity (VIF)")
+        vif_df = pd.DataFrame()
+        vif_df["Feature"] = X_audit.columns
+        vif_df["VIF"] = [variance_inflation_factor(X_audit.values, i) for i in range(len(X_audit.columns))]
+        st.table(vif_df)
+        if vif_df["VIF"].max() < 5:
+            st.success("✅ No Multicollinearity detected (VIF < 5).")
 
-    with col_diag:
-        st.write("### Model Integrity Logs")
-        dw_score = durbin_watson(y - y_pred)
-        st.metric("R² Confidence Score", f"{model.score(X, y):.4f}")
-        st.metric("Durbin-Watson Diagnostic", f"{dw_score:.2f}")
-        if 1.5 < dw_score < 2.5:
-            st.caption("✅ No significant autocorrelation detected in residuals.")
+    with cv2:
+        st.write("### Homoscedasticity (Breusch-Pagan)")
+        bp_test = het_breuschpagan(model_audit.resid, model_audit.model.exog)
+        p_bp = bp_test[1]
+        st.metric("Breusch-Pagan p-value", f"{p_bp:.4f}")
+        if p_bp > 0.05:
+            st.success("✅ Variance is Homogeneous.")
+        else:
+            st.warning("⚠️ Heteroscedasticity detected (Non-constant variance).")
 
-    # --- SECTION 3: VISUAL ANALYTICS (The Full-Stack Experience) ---
+    # --- SECTION 3: AI PREDICTION ENGINE ---
     st.divider()
-    st.header("📊 3. Visual & Geospatial Analytics")
+    st.header("🤖 3. AI Prediction & Model Integrity")
+    
+    model_ai = LinearRegression().fit(X_audit, y_audit)
+    
+    cp1, cp2 = st.columns(2)
+    with cp1:
+        st.subheader("Simulator")
+        u_dens = st.slider("Density (%)", 0, 100, 50)
+        u_weath = st.selectbox("Weather", list(weather_map.keys()))
+        u_hour = st.slider("Hour", 0, 23, 12)
+        pred = model_ai.predict([[u_dens, weather_map[u_weath], u_hour]])[0]
+        st.success(f"**AI Predicted Speed:** {pred:.2f} km/h")
+
+    with cp2:
+        st.subheader("Diagnostics")
+        dw = durbin_watson(model_audit.resid)
+        st.metric("R² Confidence", f"{model_ai.score(X_audit, y_audit):.4f}")
+        st.metric("Durbin-Watson", f"{dw:.2f}")
+
+    # --- SECTION 4: VISUAL ANALYTICS (SOFTWARE & UI) ---
+    st.divider()
+    st.header("📊 4. Visual & Spatial Analytics")
     
     # Heatmap
-    st.subheader("Global Correlation Matrix")
-    fig_heat, ax_heat = plt.subplots(figsize=(12, 4))
+    st.subheader("Statistical Relationship Matrix")
+    fig_h, ax_h = plt.subplots(figsize=(10, 4))
     sns.heatmap(df[['density_score', 'average_speed', 'weather_numeric', 'hour']].corr(method=corr_method), 
-                annot=True, cmap='RdYlGn', ax=ax_heat)
-    st.pyplot(fig_heat)
+                annot=True, cmap='RdYlGn', ax=ax_h)
+    st.pyplot(fig_h)
 
-    # Map and Hourly Trends
-    st.subheader(f"Arterial Focus: {selected_road}")
-    col_map, col_trend = st.columns([1.2, 0.8])
-    
+    # Map & Trends
+    col_map, col_line = st.columns([1.2, 0.8])
     with col_map:
+        st.subheader(f"📍 Density Map: {selected_road}")
         st.map(road_data, size='density_score', color='#ff4b4b')
         
-    with col_trend:
+    with col_line:
+        st.subheader("📈 Hourly Trend")
         fig_trend, ax_trend = plt.subplots(figsize=(10, 6))
         sns.lineplot(data=road_data, x='hour', y='density_score', marker='o', color='#ff4b4b', ax=ax_trend)
-        ax_trend.set_ylabel("Density (%)")
         st.pyplot(fig_trend)
+        
 
     # --- FOOTER ---
     st.markdown("---")
-    footer_html = f"""
-    <div style='text-align: center; padding: 10px;'>
-        <p style='color: #888888; font-size: 14px;'>
-            <b>Ankara Traffic AI Portal</b> | Developed by <a href='https://www.linkedin.com/in/ozdemircihan/' target='_blank' style='color: #ff4b4b; text-decoration: none;'>Cihan Özdemir</a>
-        </p>
-        <p style='color: #aaaaaa; font-size: 11px;'>Validated via IQR, Shapiro-Wilk, and Durbin-Watson Statistical Frameworks.</p>
+    st.markdown(f"""
+    <div style='text-align: center; color: #888888;'>
+        <b>Ankara Traffic AI Portal</b> | Developed by <a href='https://www.linkedin.com/in/ozdemircihan/' target='_blank'>Cihan Özdemir</a>
+        <br><small>Advanced Audit: IQR, Shapiro-Wilk, VIF, Breusch-Pagan, Durbin-Watson</small>
     </div>
-    """
-    st.markdown(footer_html, unsafe_allow_html=True)
-
-else:
-    st.error("Data source could not be initialized. Please check the CSV file.")
+    """, unsafe_allow_html=True)
